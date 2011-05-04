@@ -20,7 +20,7 @@ integer N_DIALOG_CHOICES;
 integer MAX_DIALOG_CHOICES_PER_PG = 6; // if not offering back button, increase this to 9. We are not, plus six trolls per page looks cleaner than 9 on one and 3 on the other.
 string PREV_PG_DIALOG_PREFIX = "< Page ";
 string NEXT_PG_DIALOG_PREFIX = "> Page ";
-string DIALOG_DONE_BTN = "Your ass hurt. DONE";
+string DIALOG_DONE_BTN = "DONE";
 string DIALOG_BACK_BTN = "<< Back";
 string SlideShowCurrent;
 integer pageNum;
@@ -152,26 +152,10 @@ default{
 //                                                                   //
 //     Currently, The menu shows a redundant "< page x" and          //
 // "page x >" option. What should be happening: On page 1, only      //
-// show "Page 2" and you know what happens on page 2.                //
-//     Also, the script is taking a giant shit wrt the               //
-// lllistenremove shenanigans. It keeps spamming the msgTimeout      // 
-// function every 60 seconds, rather than terminating like normal.   // 
-// Deleting the llWhisper is a good shortterm fix, but me being OCD  //
-// I will actually fix the root of the issue.                        //
+// show "Page 2" and you know what happens on page 2. Lines 78       //
+// to 86 need reworked to remedy this.                               //
 //     There might be hundreds of other issues. I left in the        //
 // original comments for posterity and comedy.                       //
-//     A few things to note: I did remove the places where the       //
-// "back" command is called for, because of redundancy. I opted to   //
-// not include thier full names for obvious reasons.                 //
-//     Okay I guess that was just one thing to note. I feel kind of  //
-// silly putting "A few things to note" now... Oh well... OH I       //
-// remembered another thing to note! Now THIS paragraph seems        //
-// rather pointless...                                               //
-//      This script is way over complicated for what we are doing,   //
-// but it helps provide the framework for added functionality        //
-// should we cram more features into this (or Hussie adds another    //
-// troll or something). We should look into working the changing of  //
-// the icon of the HUD to match the quirp too as you said.           //
 //      This is getting rather long, you'll figure most of it out    //
 // on your own. If you have any questions, I can be reached at       //
 // Speedypoke on Skype, and my favorite class is the spy. Thanks,    //
