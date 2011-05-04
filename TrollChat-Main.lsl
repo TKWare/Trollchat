@@ -2,7 +2,7 @@
 
 //This is the major version that will be used for updates, i.e. shit that end users will see
 //so don't stress about changing this until release time.
-string version = "0.6a"
+string version = "0.6a";
 
 //////////////////////
 //GLOBAL DEFINITIONS//
@@ -118,12 +118,13 @@ string equChat(string input) {
 
 ////Nepeta Leijon////
 string nepChat(string input) {
-	string messagePass1 = ":33 < " + input;
-	string messagePass2 = strReplace(messagePass1,"ee","33");
-	string messagePass3 = strReplace(messagePass2,"per","purr");
-	string messagePass4 = strReplace(messagePass3,"fer","fur");
-	string nepeta = strReplace(messagePass4,"pause","paws");
+    string messagePass1 = ":33 < " + input;
+    string messagePass2 = strReplace(messagePass1,"ee","33");
+    string messagePass3 = strReplace(messagePass2,"per","purr");
+    string messagePass4 = strReplace(messagePass3,"fer","fur");
+    string nepeta = strReplace(messagePass4,"pause","paws");
 return nepeta;
+}
 
 /////////////
 //   MAIN  //
