@@ -2,7 +2,7 @@
 
 //This is the major version that will be used for updates, i.e. shit that end users will see
 //so don't stress about changing this until release time.
-string version = "0.6a";
+string version = "0.6.1b";
 
 //////////////////////
 //GLOBAL DEFINITIONS//
@@ -11,11 +11,14 @@ string version = "0.6a";
 //listen handle
 integer listenHandle;
 
-//Used for making the chat name right. Define it here and use later because LSL is a nazi about doing things in global
+//Used for making the chat name right.
 string myName;
 
 //Which troll are we? Use later..
-string selTroll;
+string selTroll = "";
+
+//Ougoing chat, also used later
+string outChat;
 
 //strReplace by Haravikk Mistral
 string strReplace(string str, string search, string replace) {
@@ -127,6 +130,23 @@ return nepeta;
 }
 
 /////////////
+// SELECTOR// 
+/////////////
+
+string trollChat(string chatmsg) {
+        if ( selTroll == "Terezi" ) { return tereziChat(chatmsg); }
+    else if (selTroll == "Karkat") { return karkatChat(chatmsg); }
+    else if (selTroll == "Eridan") { return eriChat(chatmsg); }
+    else if (selTroll == "Feferi") { return fefChat(chatmsg); }
+    else if (selTroll == "Equius") { return equChat(chatmsg); }
+    else if (selTroll == "Nepeta") { return nepChat(chatmsg); }
+    else {
+        llOwnerSay("IT'S BROKEN, DUNKASS!");
+        return NULL_KEY;
+         }
+}
+
+/////////////
 //   MAIN  //
 /////////////
 default
@@ -136,6 +156,13 @@ default
         init();
     }
     
+    link_message(integer sender_num, integer num, string command, key id)
+    {
+        selTroll = command;
+        llOwnerSay(command + " selected.");
+        llOwnerSay("selTroll set to " + selTroll); //DEBUG
+    }
+    
     state_entry()
     {
         init();
@@ -143,17 +170,14 @@ default
         llOwnerSay("Troll channel: 413");
     }
     
-    touch_start(integer total_number)
-    {
-        //llOwnerSay("Say something on channel 413");
-    }
-
-//Time to talk
-    listen( integer channel, string name, key id, string message )
+    listen(integer channel, string name, key id, string message)
     {
         string myName = llGetObjectName();
         llSetObjectName(llKey2Name(llGetOwner()));
-        llSay(0, nepChat(message) );
+        llOwnerSay("hit listen with " + selTroll);
+        llSay(0, trollChat(message) );
         llSetObjectName(myName);
     }
+    
+   
 }
