@@ -136,9 +136,38 @@ return nepeta;
 //First letter should always be lowercase
 //Second letter should always be uppercase
 //FUCK I DONT KNOW SHIT IN MY MOUTH
-
 //string gamChat(string input) {
 
+////Sollux Captor////
+string solChat(string input) {
+	string messagePass1 = strReplace(input,"s","2");
+	string messagePass2 = strReplace(messagePass1,"i","ii");
+	string messagePass3 = strReplace(messagePass2,"o","0");
+	string messagePass4 = strReplace(messagePass3,"to","two");
+	string sollux = strReplace(messagePass4,"too","two");
+return sollux;
+}|
+	
+////Kanaya Maryam////
+//stuff
+
+////Vriska Serket////
+string vriChat(string input) {
+	string messagePass1 = strReplace(input,"b","8");
+	string vriska = strReplace(messagePass1,":)","::::)");
+	return vriska;
+	
+////Aradia Megido////
+string ariChat(string input) {
+	string messagePass1 = llToLower(input);
+	string messagePass2 = strReplace(messagePass1,"o","0");
+	string messagePass3 = strReplace(messagePass2,".","");
+	string messagePass4 = strReplace(messagePass3,",","");
+	string messagePass5 = strReplace(messagePass4,"!","");
+	string aradia = strReplace(messagePass5,";","");
+	return aradia;
+	}
+	
 
 /////////////
 // SELECTOR// 
@@ -152,13 +181,13 @@ string trollChat(string chatmsg) {
     else if (selTroll == "Equius") { return equChat(chatmsg); }
     else if (selTroll == "Nepeta") { return nepChat(chatmsg); }
    // else if (selTroll == "Gamzee") { return gamChat(chatmsg); }
-   // else if (selTroll == "Sollux") { return solChat(chatmsg); }
+    else if (selTroll == "Sollux") { return solChat(chatmsg); }
    // else if (selTroll == "Kanaya") { return kanChat(chatmsg); }
-   // else if (selTroll == "Vriska") { return vriChat(chatmsg); }
-   // else if (selTroll == "Aradia") { return ariChat(chatmsg); }
+    else if (selTroll == "Vriska") { return vriChat(chatmsg); }
+    else if (selTroll == "Aradia") { return ariChat(chatmsg); }
    // else if (selTroll == "Tavros") { return tavChat(chatmsg); }
     else {
-        llOwnerSay("IT'S BROKEN, DUNKASS!");
+        llOwnerSay("YOU BROKE IT, DUNKASS!");
         return NULL_KEY;
          }
 }
