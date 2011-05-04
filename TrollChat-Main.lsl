@@ -1,5 +1,8 @@
 //TrollChat by Tsukasa Karuna
 
+//This is the major version that will be used for updates, i.e. shit that end users will see
+//so don't stress about changing this until release time.
+string version = "0.6a"
 
 //////////////////////
 //GLOBAL DEFINITIONS//
@@ -74,7 +77,7 @@ integer randInt(integer n) //Let's get a random number..
      return (integer)llFrand(n + 1);
 }
 
-integer randIntBetween(integer min, integer max)//. between something and something else
+integer randIntBetween(integer min, integer max)//..between something and something else
 {
     return min + randInt(max - min);
 }
@@ -96,7 +99,8 @@ string fefChat(string input) { // And finally, do thing
     string messagePass1 = strReplace(input,"h",")(");
     string messagePass2 = strReplace(messagePass1,"H",")(");
     string messagePass3 = strReplace(messagePass2,"E",randomDashes() + "E");
-    string feferi = strReplace(messagePass3,"talk","glub");
+    string messagePass4 = strReplace(messagePass3,"hey","glub");
+    string feferi = strReplace(messagePass4,"talk","glub");
     return feferi; //I am so not looking forward to figuring out Gamzee's fucking quirk after this garglemesh.
 }
 
@@ -112,6 +116,14 @@ string equChat(string input) {
 }
 
 
+////Nepeta Leijon////
+string nepChat(string input) {
+	string messagePass1 = ":33 < " + input;
+	string messagePass2 = strReplace(messagePass1,"ee","33");
+	string messagePass3 = strReplace(messagePass2,"per","purr");
+	string messagePass4 = strReplace(messagePass3,"fer","fur");
+	string nepeta = strReplace(messagePass4,"pause","paws");
+return nepeta;
 
 /////////////
 //   MAIN  //
@@ -126,8 +138,8 @@ default
     state_entry()
     {
         init();
-        llOwnerSay("TrollChat" + " " + version );
-        llOwnerSay("Say something on channel 413");
+        llOwnerSay("TrollChat "  + version + " ready." );
+        llOwnerSay("Troll channel: 413");
     }
     
     touch_start(integer total_number)
@@ -140,7 +152,7 @@ default
     {
         string myName = llGetObjectName();
         llSetObjectName(llKey2Name(llGetOwner()));
-        llSay(0, equChat(message) );
+        llSay(0, nepChat(message) );
         llSetObjectName(myName);
     }
 }
