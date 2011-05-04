@@ -64,7 +64,8 @@ default
             {
                 // display the texture from menu selection 
                 llSetTexture(message, ALL_SIDES);
- 
+                // send linked message for core script to pick up
+                llMessageLinked(LINK_THIS, 0, message, NULL_KEY);
             }      
         }
     }  
