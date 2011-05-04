@@ -74,7 +74,6 @@ string eriChat(string input) {
 }
 
 ////Feferi Peixes////
-
 integer randInt(integer n) //Let's get a random number..
 {
      return (integer)llFrand(n + 1);
@@ -129,6 +128,18 @@ string nepChat(string input) {
 return nepeta;
 }
 
+////Gamzee Makara//// (oh boy here we go)
+//Here's how I want this to go down:
+//gamChat is called
+//Enter Loop
+//Get Letter
+//First letter should always be lowercase
+//Second letter should always be uppercase
+//FUCK I DONT KNOW SHIT IN MY MOUTH
+
+//string gamChat(string input) {
+
+
 /////////////
 // SELECTOR// 
 /////////////
@@ -140,6 +151,12 @@ string trollChat(string chatmsg) {
     else if (selTroll == "Feferi") { return fefChat(chatmsg); }
     else if (selTroll == "Equius") { return equChat(chatmsg); }
     else if (selTroll == "Nepeta") { return nepChat(chatmsg); }
+   // else if (selTroll == "Gamzee") { return gamChat(chatmsg); }
+   // else if (selTroll == "Sollux") { return solChat(chatmsg); }
+   // else if (selTroll == "Kanaya") { return kanChat(chatmsg); }
+   // else if (selTroll == "Vriska") { return vriChat(chatmsg); }
+   // else if (selTroll == "Aradia") { return ariChat(chatmsg); }
+   // else if (selTroll == "Tavros") { return tavChat(chatmsg); }
     else {
         llOwnerSay("IT'S BROKEN, DUNKASS!");
         return NULL_KEY;
