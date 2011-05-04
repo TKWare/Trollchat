@@ -139,6 +139,7 @@ default{
   }
  
   timer() {
+    llSetTimerEvent(0);
     llListenRemove(listen_id);
     llWhisper(0, msgTimeout);
   }
