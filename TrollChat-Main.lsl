@@ -1,4 +1,4 @@
-//TrollChat by Tsukasa Karuna
+//TrollChat by Tsukasa Karuna, Isaz Svoboda
 
 //This is the major version that will be used for updates, i.e. shit that end users will see
 //so don't stress about changing this until release time.
@@ -41,18 +41,25 @@ init()
     llOwnerSay("Initializing");
 }
 
+//Get memory free
+string memory()
+{
+    string freemem = "Free memory: " + (string)llGetFreeMemory();
+    return freemem;
+}
+
 /////////////////////
 // TROLL FUNCTIONS //
 /////////////////////
 
 ////Terezi Pyrope////
 string tereziChat(string input) {
-        string upperMessage = llToUpper(input);
-        string messagePass1 = strReplace(upperMessage,"E","3"); 
-        string messagePass2 = strReplace(messagePass1,"A","4"); 
-        string messagePass3 = strReplace(messagePass2,"I","1"); 
-        string terezi = strReplace(messagePass3,":)",">:]"); 
-        return terezi;
+        input = llToUpper(input);
+        input = strReplace(input,"E","3"); 
+        input = strReplace(input,"A","4"); 
+        input = strReplace(input,"I","1"); 
+        input = strReplace(input,":)",">:]"); 
+        return input;
     }
     
 ////Karkat Vantas//// (Easy mode!) (Hell I don't even need to write a function for this!) (But I'm going to because OC-fucking-D)
@@ -62,15 +69,15 @@ string karkatChat(string input) {
 
 ////Eridan Ampora////
 string eriChat(string input) {
-    string lowerMessage = llToLower(input);
-    string messagePass1 = strReplace(lowerMessage,"w","ww");
-    string messagePass2 = strReplace(messagePass1,"v","vv");
-    string messagePass3 = strReplace(messagePass2,"ing","in");
-    string messagePass4 = strReplace(messagePass3,",","");
-    string messagePass5 = strReplace(messagePass4,".","");
-    string messagePass6 = strReplace(messagePass5,"!","");
-    string eridan = strReplace(messagePass6,";","");
-    return eridan;
+    input = llToLower(input);
+    input = strReplace(input,"w","ww");
+    input = strReplace(input,"v","vv");
+    input = strReplace(input,"ing","in");
+    input = strReplace(input,",","");
+    input = strReplace(input,".","");
+    input = strReplace(input,"!","");
+    input = strReplace(input,";","");
+    return input;
 }
 
 ////Feferi Peixes////
@@ -97,35 +104,35 @@ string randomDashes() { // And spew that many dashes
     return dashes;
 }
  
-string fefChat(string input) { // And finally, do thing
-    string messagePass1 = strReplace(input,"h",")(");
-    string messagePass2 = strReplace(messagePass1,"H",")(");
-    string messagePass3 = strReplace(messagePass2,"E",randomDashes() + "E");
-    string messagePass4 = strReplace(messagePass3,"hey","glub");
-    string feferi = strReplace(messagePass4,"talk","glub");
-    return feferi; //I am so not looking forward to figuring out Gamzee's fucking quirk after this garglemesh.
+string fefChat(string input) { 
+    input = strReplace(input,"h",")(");
+    input = strReplace(input,"H",")(");
+    input = strReplace(input,"E",randomDashes() + "E");
+    input = strReplace(input,"hey","glub");
+    input = strReplace(input,"talk","glub");
+    return input;
 }
 
 ////Equius Zahhak////
 string equChat(string input) {
-    string messagePass1 = "D --> " + input;
-    string messagePass2 = strReplace(messagePass1,"x","%");
-    string messagePass3 = strReplace(messagePass2,"ool","001");
-    string messagePass4 = strReplace(messagePass3,"loo","100");
-    string messagePass5 = strReplace(messagePass4,"lew","100");
-    string equius = strReplace(messagePass5,"strong","STRONG");
-    return equius;
+    input = "D --> " + input;
+    input = strReplace(input,"x","%");
+    input = strReplace(input,"ool","001");
+    input = strReplace(input,"loo","100");
+    input = strReplace(input,"lew","100");
+    input = strReplace(input,"strong","STRONG");
+    return input;
 }
 
 
 ////Nepeta Leijon////
 string nepChat(string input) {
-    string messagePass1 = ":33 < " + input;
-    string messagePass2 = strReplace(messagePass1,"ee","33");
-    string messagePass3 = strReplace(messagePass2,"per","purr");
-    string messagePass4 = strReplace(messagePass3,"fer","fur");
-    string nepeta = strReplace(messagePass4,"pause","paws");
-return nepeta;
+    input = ":33 < " + input;
+    input = strReplace(input,"ee","33");
+    input = strReplace(input,"per","purr");
+    input = strReplace(input,"fer","fur");
+    input = strReplace(input,"pause","paws");
+return input;
 }
 
 ////Gamzee Makara//// (oh boy here we go)
@@ -140,41 +147,42 @@ return nepeta;
 
 ////Sollux Captor////
 string solChat(string input) {
-	string messagePass1 = strReplace(input,"s","2");
-	string messagePass2 = strReplace(messagePass1,"i","ii");
-	string messagePass3 = strReplace(messagePass2,"o","0");
-	string messagePass4 = strReplace(messagePass3,"to","two");
-	string sollux = strReplace(messagePass4,"too","two");
-return sollux;
-}|
-	
+    input = strReplace(input,"s","2");
+    input = strReplace(input,"i","ii");
+    input = strReplace(input,"o","0");
+    input = strReplace(input,"to","two");
+    input = strReplace(input,"too","two");
+return input;
+}
+    
 ////Kanaya Maryam////
 //stuff
 
 ////Vriska Serket////
 string vriChat(string input) {
-	string messagePass1 = strReplace(input,"b","8");
-	string vriska = strReplace(messagePass1,":)","::::)");
-	return vriska;
-	
+    input = strReplace(input,"b","8");
+    input = strReplace(input,":)","::::)");
+    return input;
+}
+
 ////Aradia Megido////
 string ariChat(string input) {
-	string messagePass1 = llToLower(input);
-	string messagePass2 = strReplace(messagePass1,"o","0");
-	string messagePass3 = strReplace(messagePass2,".","");
-	string messagePass4 = strReplace(messagePass3,",","");
-	string messagePass5 = strReplace(messagePass4,"!","");
-	string aradia = strReplace(messagePass5,";","");
-	return aradia;
-	}
-	
+    input = llToLower(input);
+    input = strReplace(input,"o","0");
+    input = strReplace(input,".","");
+    input = strReplace(input,",","");
+    input = strReplace(input,"!","");
+    input = strReplace(input,";","");
+    return input;
+    }
+    
 
 /////////////
 // SELECTOR// 
 /////////////
 
 string trollChat(string chatmsg) {
-        if ( selTroll == "Terezi" ) { return tereziChat(chatmsg); }
+        if  (selTroll == "Terezi" ) { return tereziChat(chatmsg); }
     else if (selTroll == "Karkat") { return karkatChat(chatmsg); }
     else if (selTroll == "Eridan") { return eriChat(chatmsg); }
     else if (selTroll == "Feferi") { return fefChat(chatmsg); }
@@ -187,7 +195,8 @@ string trollChat(string chatmsg) {
     else if (selTroll == "Aradia") { return ariChat(chatmsg); }
    // else if (selTroll == "Tavros") { return tavChat(chatmsg); }
     else {
-        llOwnerSay("YOU BROKE IT, DUNKASS!");
+        llOwnerSay("WHAT IS WRONG WISH THIS PICTURE?!?!?!?!?!");
+        llOwnerSay("ERROR: MenuReturn failure, this should never happen. Contact support.");
         return NULL_KEY;
          }
 }
@@ -206,13 +215,14 @@ default
     {
         selTroll = command;
         llOwnerSay(command + " selected.");
-        llOwnerSay("selTroll set to " + selTroll); //DEBUG
+        //llOwnerSay("selTroll set to " + selTroll); //DEBUG FUNCTION
     }
     
     state_entry()
     {
         init();
         llOwnerSay("TrollChat "  + version + " ready." );
+        llOwnerSay( memory() );
         llOwnerSay("Troll channel: 413");
     }
     
@@ -220,10 +230,14 @@ default
     {
         string myName = llGetObjectName();
         llSetObjectName(llKey2Name(llGetOwner()));
-        llOwnerSay("hit listen with " + selTroll);
+        //llOwnerSay("hit listen with " + selTroll); //DEBUG FUNCTION
         llSay(0, trollChat(message) );
         llSetObjectName(myName);
     }
     
-   
-}
+    touch_start(integer foo)
+    {
+        llOwnerSay( memory() ); //DEBUG FUNCTION
+    }
+    
+   }
