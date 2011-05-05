@@ -2,7 +2,7 @@
 
 //This is the major version that will be used for updates, i.e. shit that end users will see
 //so don't stress about changing this until release time.
-string version = "0.6.1b";
+string version = "0.10b";
 
 //////////////////////
 //GLOBAL DEFINITIONS//
@@ -25,12 +25,23 @@ string strReplace(string str, string search, string replace) {
     return llDumpList2String(llParseStringKeepNulls((str = "") + str, [search], []), replace);
 }
 
-//String logic, also from the LSL wiki
-//Maybe we won't need this?
-integer isin(string haystack, string needle) // http://wiki.secondlife.com/wiki/llSubStringIndex
+//Random number generators, used for Feferi and Gamzee
+integer randInt(integer n)
 {
-    return ~llSubStringIndex(haystack, needle);
+     return (integer)llFrand(n + 1);
 }
+
+integer randIntBetween(integer min, integer max)
+{
+    return min + randInt(max - min);
+}
+
+//String logic, also from the LSL wiki
+//Maybe we won't need this one?
+//integer isin(string haystack, string needle) // http://wiki.secondlife.com/wiki/llSubStringIndex
+//{
+//    return ~llSubStringIndex(haystack, needle);
+//}
 
 //Global init function
 //Reset the listener and say what's up
@@ -81,23 +92,13 @@ string eriChat(string input) {
 }
 
 ////Feferi Peixes////
-integer randInt(integer n) //Let's get a random number..
-{
-     return (integer)llFrand(n + 1);
-}
-
-integer randIntBetween(integer min, integer max)//..between something and something else
-{
-    return min + randInt(max - min);
-}
-
-string randomDashes() { // And spew that many dashes
+string randomDashes() {
     integer howMany = randIntBetween(1,8);
     integer counter = 1;
     string dashes = "";
     while (counter < howMany)
     {
-        //I have no idea why this next line works. It looks ass-backwards.
+        //I have no idea why this next line works. It looks ass-backwards. Thanks Script Academy!
         dashes+="-";
         counter++;
     }
@@ -135,15 +136,35 @@ string nepChat(string input) {
 return input;
 }
 
-////Gamzee Makara//// (oh boy here we go)
-//Here's how I want this to go down:
-//gamChat is called
-//Enter Loop
-//Get Letter
-//First letter should always be lowercase
-//Second letter should always be uppercase
-//FUCK I DONT KNOW SHIT IN MY MOUTH
-//string gamChat(string input) {
+////Gamzee Makara//// 
+string gamChat(string input) {
+    integer len = llStringLength(input);
+    integer oe = randIntBetween(0,1);
+    integer loc = 0; 
+    string miracles;
+    while ( loc < len )
+    {
+        string work = llGetSubString(input, loc, loc); 
+        if ( oe == 1 )
+        {
+            work = llToUpper(work); 
+            miracles = miracles + work;
+            loc++;
+            oe = 0; 
+        }
+        else
+        {
+            work = llToLower(work);
+            miracles = miracles + work;
+            loc++;
+            oe = 1;
+        }
+    }
+    miracles = strReplace(miracles,":)",":o)");
+    miracles = strReplace(miracles,":(",":o(");
+    return miracles;
+}
+
 
 ////Sollux Captor////
 string solChat(string input) {
@@ -188,7 +209,7 @@ string trollChat(string chatmsg) {
     else if (selTroll == "Feferi") { return fefChat(chatmsg); }
     else if (selTroll == "Equius") { return equChat(chatmsg); }
     else if (selTroll == "Nepeta") { return nepChat(chatmsg); }
-   // else if (selTroll == "Gamzee") { return gamChat(chatmsg); }
+    else if (selTroll == "Gamzee") { return gamChat(chatmsg); }
     else if (selTroll == "Sollux") { return solChat(chatmsg); }
    // else if (selTroll == "Kanaya") { return kanChat(chatmsg); }
     else if (selTroll == "Vriska") { return vriChat(chatmsg); }
@@ -234,10 +255,11 @@ default
         llSay(0, trollChat(message) );
         llSetObjectName(myName);
     }
-    
-    touch_start(integer foo)
-    {
-        llOwnerSay( memory() ); //DEBUG FUNCTION
-    }
+   
+   /// DEBUG CRAP 
+   /// touch_start(integer foo)
+   /// {
+   ///     llOwnerSay( memory() );
+   /// }
     
    }
