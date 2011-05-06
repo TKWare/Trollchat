@@ -4,7 +4,7 @@ integer debug = 0;
 
 //This is the major version that will be used for updates, i.e. shit that end users will see
 //so don't stress about changing this until release time.
-string version = "0.10b";
+string version = "0.11b";
 
 //////////////////////
 //GLOBAL DEFINITIONS//
@@ -237,56 +237,79 @@ string ariChat(string input) {
     
 ////Tavros Nitram////
 string tavChat(string input) {
-    input = llToUpper(input);                                                                       // Uppercase everything first
-    list tChat = llParseStringKeepNulls(input,[" "], [".", ","]);                                   // Now it's a list
-    integer tChatLineLen = llGetListLength(tChat);                                                  // Get list length for later loopage
-    integer tChatLinePos = 0;                                                                       // Counter for our position in the list
+    input = llToUpper(input);                                                                       
+    list tChat = llParseString2List(input,[" "], [".", ","]);
+    if (debug) { llOwnerSay("<" + llDumpList2String(tChat,"><") + ">"); }                                
+    integer tChatLineLen = llGetListLength(tChat);
+    if (debug) { llOwnerSay("List length: " + (string)tChatLineLen);}                                             
+    integer tChatLinePos = 0;                                                                      
     integer tDoCap       = 0;
     string tTargetWord;
-    string tOutputStr;
+    string tOutputStr;  // Declaring our variables ahead of time, to avoid confusion later
     list tFixedWordList;
     string tTargetLetter;
     string tFixedLetter;
     string tFixedWord;
-    llOwnerSay("Entering main loop with :" + input);                                                                              // Bit for checking if we need to fix this word
-    while (tChatLineLen < tChatLinePos)                                                             // Enter the loop using list position vs list length
+    if (debug) { llOwnerSay("Entering main loop with: " + input);
+                 llOwnerSay((string)tChatLineLen);
+                 llOwnerSay((string)tChatLinePos);
+                  }                                                                         
+    while ( tChatLineLen > tChatLinePos )                                                          
     {
-        tTargetWord = llList2String(tChat, tChatLinePos);                                    // Grab a word from the list
-        if ( tTargetWord == "." ) { //( tTargetWord == "," ) || ( tChatLinePos == 0 ))              // If this is string 0, or after a "," or ".", flip the caps bit and move on
+        tTargetWord = llList2String(tChat, tChatLinePos);
+        if (debug) llOwnerSay("Target word: " + tTargetWord);                                    
+        if ( tTargetWord == "." ) 
+        {
+            llOwnerSay("We must be a period, go to next word");
             tDoCap = 1;
-            llOwnerSay("+");                                                                             // Flip the bit
+            tChatLinePos++;
+            tTargetWord = llList2String(tChat, tChatLinePos);
+                                                                                    
         } 
-        else if ( tTargetWord == ".") {
+        else if ( tTargetWord == ",")
+        {
+            if (debug) llOwnerSay("We must be a comma, go to next word");
             tDoCap = 1;
-            llOwnerSay("+");
+            tChatLinePos++;
+            tTargetWord = llList2String(tChat, tChatLinePos);
         }
-        else if ( tChatLinePos == 0 ) {
+        else if ( tChatLinePos == 0 )
+        {
+            if (debug) llOwnerSay("This must be word 0: " + tTargetWord);
             tDoCap = 1;
-            llOwnerSay("+");
         }
-        else {llOwnerSay("Something is very wrong: Logic Error on String Parse");}
-        
-        if (tDoCap == 0) { 
-        llOwnerSay("skipping caps");
+        else;
+        if ( tDoCap == 1 )
+        {
+        tTargetLetter = llGetSubString(tTargetWord, 0, 0);                                  
+        tFixedLetter = llToLower(tTargetLetter);                                            
+        tTargetWord = llDeleteSubString(tTargetWord, 0, 0);                                         
+        tFixedWord = llInsertString(tTargetWord, 0, tFixedLetter);                          
+        tFixedWordList = llParseString2List(tFixedWord, [""], [""]);                              
+        tChat = llListReplaceList(tChat, tFixedWordList, tChatLinePos, tChatLinePos);          
+        tDoCap = 0;                                                                             
+        tChatLinePos++;      
+        }                                                     
+        else
+        {        
+        if (debug) llOwnerSay("skipping caps");
         tChatLinePos++;
-        }                                                         // If we don't need to fix it, move on
-        else {                                                                                      // If we do, fix that shit
-        tTargetLetter = llGetSubString(tTargetWord, 0, 0);                                   // Target letter is the first letter of tTargetWord
-        tFixedLetter = llToUpper(tTargetLetter);                                             // Uppercase it.
-        tTargetWord = llDeleteSubString(tTargetWord, 0, 0);                                         // Cull the first character of tTargetWord
-        tFixedWord = llInsertString(tTargetWord, 0, tFixedLetter);                           // Inject the fixed letter into tTargetWord
-        tFixedWordList = llParseString2List(tFixedWord, [""], [""]);                               // Render the fixed word into a list
-        tChat = llListReplaceList(tChat, tFixedWordList, tChatLinePos, tChatLinePos);          // Update the original list with our fix
-        tDoCap = 0;                                                                                 // We're done, turn the caps bit back off
-        tChatLinePos++;                                                                             // And increment our position in the main list
         }
     }
-    tChatLinePos = 0;                                                                               // If we're down here it means we're done processing, reconstruction time. Reset the position.
-    while (tChatLineLen < tChatLinePos)                                                             // One more loop, same as before
+    tChatLinePos = 0;                                                                            
+    while (tChatLineLen > tChatLinePos)                                                         
     {
+        if (( llList2String(tChat, tChatLinePos+1) == "," ) || ( llList2String(tChat, tChatLinePos+1) == "." )) //If the next character after our word is a "." or "," , skip adding the space
+        {
+            tOutputStr = tOutputStr + llList2String(tChat, tChatLinePos);
+            tChatLinePos++;
+        }
+        else 
+        {
         tOutputStr = tOutputStr + llList2String(tChat, tChatLinePos) + " ";
-        llOwnerSay(tOutputStr);
+        if (debug) llOwnerSay(tOutputStr);
         tChatLinePos++;
+        }
     }                                                                                          
      return tOutputStr;
 }
@@ -351,10 +374,9 @@ default
         llSetObjectName(myName);
     }
    
-   /// DEBUG CRAP 
-   /// touch_start(integer foo)
-   /// {
-   ///     llOwnerSay( memory() );
-   /// }
+    touch_start(integer foo)
+    {
+        if (debug) llOwnerSay( memory() );
+    }
     
    }
