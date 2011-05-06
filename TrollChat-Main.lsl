@@ -1,4 +1,6 @@
 //TrollChat by Tsukasa Karuna, Isaz Svoboda
+//Debug Mode
+integer debug = 0;
 
 //This is the major version that will be used for updates, i.e. shit that end users will see
 //so don't stress about changing this until release time.
@@ -43,13 +45,12 @@ integer randIntBetween(integer min, integer max)
 //    return ~llSubStringIndex(haystack, needle);
 //}
 
-//Global init function
-//Reset the listener and say what's up
+//Global init function, clear the listener just in case
 init()
 {
+    llOwnerSay("Initializing...");
     llListenRemove(listenHandle);
     listenHandle = llListen(413, "", llGetOwner(), "");
-    llOwnerSay("Initializing");
 }
 
 //Get memory free
@@ -69,11 +70,13 @@ string tereziChat(string input) {
         input = strReplace(input,"E","3"); 
         input = strReplace(input,"A","4"); 
         input = strReplace(input,"I","1"); 
-        input = strReplace(input,":)",">:]"); 
+        input = strReplace(input,":)",">:]");
+        input = strReplace(input,":(",">:(");
+        input = strReplace(input,":|",">:(");
         return input;
     }
     
-////Karkat Vantas//// (Easy mode!) (Hell I don't even need to write a function for this!) (But I'm going to because OC-fucking-D)
+////Karkat Vantas//// (Easy mode!)
 string karkatChat(string input) {
     return llToUpper(input);
 }
@@ -83,7 +86,7 @@ string eriChat(string input) {
     input = llToLower(input);
     input = strReplace(input,"w","ww");
     input = strReplace(input,"v","vv");
-    input = strReplace(input,"ing","in");
+    input = strReplace(input,"ing","in'");
     input = strReplace(input,",","");
     input = strReplace(input,".","");
     input = strReplace(input,"!","");
@@ -138,25 +141,25 @@ return input;
 
 ////Gamzee Makara//// 
 string gamChat(string input) {
-    integer len = llStringLength(input);
+    integer glen = llStringLength(input);
     integer oe = randIntBetween(0,1);
-    integer loc = 0; 
+    integer gloc = 0; 
     string miracles;
-    while ( loc < len )
+    while ( gloc < glen )
     {
-        string work = llGetSubString(input, loc, loc); 
-        if ( oe == 1 )
+        string work = llGetSubString(input, gloc, gloc);
+        if ( oe == 1 )  //BIFURCATE (THIS, THIS)
         {
             work = llToUpper(work); 
             miracles = miracles + work;
-            loc++;
+            gloc++;
             oe = 0; 
         }
         else
         {
             work = llToLower(work);
             miracles = miracles + work;
-            loc++;
+            gloc++;
             oe = 1;
         }
     }
@@ -177,7 +180,46 @@ return input;
 }
     
 ////Kanaya Maryam////
-//stuff
+string kanChat(string input) {
+    integer kLen = llStringLength(input); 
+    list kChatLineList = llParseStringKeepNulls(input,[" "],["."]);
+    if (debug) { llOwnerSay("Got: " + (string)kChatLineList); }
+    if (debug) { llOwnerSay("<" + llDumpList2String(kChatLineList,"><") + ">"); }
+    integer kChatLineLen = llGetListLength(kChatLineList);
+    integer kLinePos = 0;
+    list kcase;
+    string kOutputStr;
+    while ( kLinePos < kChatLineLen )
+    {
+        string kCaseWork = llGetSubString(llList2String(kChatLineList, kLinePos), 0, 0);
+        string kCaseWord = llList2String(kChatLineList, kLinePos);
+        if (debug) { llOwnerSay("Target Letter: " + kCaseWork + " in " + kCaseWord); }
+        kCaseWork = llToUpper(kCaseWork);
+        kCaseWord = llDeleteSubString(kCaseWord, 0, 0);
+        kCaseWord = llInsertString(kCaseWord,0,kCaseWork);
+        if (debug) { llOwnerSay("New letter: " + kCaseWork);
+                     llOwnerSay("New word: " + kCaseWord); }
+        list kReplacement = llParseString2List(kCaseWord, [""] ,[""]);
+        if (debug) { llOwnerSay("Replacement string: " + (string)kReplacement); }
+        if (debug) { llOwnerSay("List position before replace: " + (string)kLinePos); }
+        kChatLineList = llListReplaceList(kChatLineList, kReplacement, kLinePos, kLinePos);
+        if (debug) { llOwnerSay("<" + llDumpList2String(kChatLineList,"><") + ">"); }
+        kLinePos++;
+        if (debug) { llOwnerSay("List position after replace: " + (string)kLinePos); }
+    }
+    kLinePos = 0;
+    while ( kLinePos < kChatLineLen )
+    {
+        kOutputStr = kOutputStr + llList2String(kChatLineList, kLinePos) + " ";
+        if (debug) { llOwnerSay("Ouput string progress: " + kOutputStr); }
+        kLinePos++;
+    }
+    return kOutputStr;
+}
+
+//MY KINGDOM FOR A REGEX ENGINE
+    
+    
 
 ////Vriska Serket////
 string vriChat(string input) {
@@ -198,9 +240,9 @@ string ariChat(string input) {
     }
     
 
-/////////////
-// SELECTOR// 
-/////////////
+//////////////
+// SELECTOR // 
+//////////////
 
 string trollChat(string chatmsg) {
         if  (selTroll == "Terezi" ) { return tereziChat(chatmsg); }
@@ -211,7 +253,7 @@ string trollChat(string chatmsg) {
     else if (selTroll == "Nepeta") { return nepChat(chatmsg); }
     else if (selTroll == "Gamzee") { return gamChat(chatmsg); }
     else if (selTroll == "Sollux") { return solChat(chatmsg); }
-   // else if (selTroll == "Kanaya") { return kanChat(chatmsg); }
+    else if (selTroll == "Kanaya") { return kanChat(chatmsg); }
     else if (selTroll == "Vriska") { return vriChat(chatmsg); }
     else if (selTroll == "Aradia") { return ariChat(chatmsg); }
    // else if (selTroll == "Tavros") { return tavChat(chatmsg); }
@@ -222,9 +264,9 @@ string trollChat(string chatmsg) {
          }
 }
 
-/////////////
-//   MAIN  //
-/////////////
+////////////
+//  MAIN  //
+////////////
 default
 {
     on_rez(integer start_param)
@@ -245,6 +287,8 @@ default
         llOwnerSay("TrollChat "  + version + " ready." );
         llOwnerSay( memory() );
         llOwnerSay("Troll channel: 413");
+        if ( llGetObjectDesc() == "DEBUG MODE" ) { llOwnerSay("DEBUG MODE ENABLED");
+                                                   debug = 1;                     }
     }
     
     listen(integer channel, string name, key id, string message)
