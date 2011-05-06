@@ -38,12 +38,11 @@ integer randIntBetween(integer min, integer max)
     return min + randInt(max - min);
 }
 
-//String logic, also from the LSL wiki
-//Maybe we won't need this one?
-//integer isin(string haystack, string needle) // http://wiki.secondlife.com/wiki/llSubStringIndex
-//{
-//    return ~llSubStringIndex(haystack, needle);
-//}
+
+integer isin(string haystack, string needle) // http://wiki.secondlife.com/wiki/llSubStringIndex
+{
+    return ~llSubStringIndex(haystack, needle);
+}
 
 //Global init function, clear the listener just in case
 init()
@@ -217,10 +216,6 @@ string kanChat(string input) {
     return kOutputStr;
 }
 
-//MY KINGDOM FOR A REGEX ENGINE
-    
-    
-
 ////Vriska Serket////
 string vriChat(string input) {
     input = strReplace(input,"b","8");
@@ -237,15 +232,72 @@ string ariChat(string input) {
     input = strReplace(input,"!","");
     input = strReplace(input,";","");
     return input;
-    }
+}
     
+    
+////Tavros Nitram////
+string tavChat(string input) {
+    input = llToUpper(input);                                                                       // Uppercase everything first
+    list tChat = llParseStringKeepNulls(input,[" "], [".", ","]);                                   // Now it's a list
+    integer tChatLineLen = llGetListLength(tChat);                                                  // Get list length for later loopage
+    integer tChatLinePos = 0;                                                                       // Counter for our position in the list
+    integer tDoCap       = 0;
+    string tTargetWord;
+    string tOutputStr;
+    list tFixedWordList;
+    string tTargetLetter;
+    string tFixedLetter;
+    string tFixedWord;
+    llOwnerSay("Entering main loop with :" + input);                                                                              // Bit for checking if we need to fix this word
+    while (tChatLineLen < tChatLinePos)                                                             // Enter the loop using list position vs list length
+    {
+        tTargetWord = llList2String(tChat, tChatLinePos);                                    // Grab a word from the list
+        if ( tTargetWord == "." ) { //( tTargetWord == "," ) || ( tChatLinePos == 0 ))              // If this is string 0, or after a "," or ".", flip the caps bit and move on
+            tDoCap = 1;
+            llOwnerSay("+");                                                                             // Flip the bit
+        } 
+        else if ( tTargetWord == ".") {
+            tDoCap = 1;
+            llOwnerSay("+");
+        }
+        else if ( tChatLinePos == 0 ) {
+            tDoCap = 1;
+            llOwnerSay("+");
+        }
+        else {llOwnerSay("Something is very wrong: Logic Error on String Parse");}
+        
+        if (tDoCap == 0) { 
+        llOwnerSay("skipping caps");
+        tChatLinePos++;
+        }                                                         // If we don't need to fix it, move on
+        else {                                                                                      // If we do, fix that shit
+        tTargetLetter = llGetSubString(tTargetWord, 0, 0);                                   // Target letter is the first letter of tTargetWord
+        tFixedLetter = llToUpper(tTargetLetter);                                             // Uppercase it.
+        tTargetWord = llDeleteSubString(tTargetWord, 0, 0);                                         // Cull the first character of tTargetWord
+        tFixedWord = llInsertString(tTargetWord, 0, tFixedLetter);                           // Inject the fixed letter into tTargetWord
+        tFixedWordList = llParseString2List(tFixedWord, [""], [""]);                               // Render the fixed word into a list
+        tChat = llListReplaceList(tChat, tFixedWordList, tChatLinePos, tChatLinePos);          // Update the original list with our fix
+        tDoCap = 0;                                                                                 // We're done, turn the caps bit back off
+        tChatLinePos++;                                                                             // And increment our position in the main list
+        }
+    }
+    tChatLinePos = 0;                                                                               // If we're down here it means we're done processing, reconstruction time. Reset the position.
+    while (tChatLineLen < tChatLinePos)                                                             // One more loop, same as before
+    {
+        tOutputStr = tOutputStr + llList2String(tChat, tChatLinePos) + " ";
+        llOwnerSay(tOutputStr);
+        tChatLinePos++;
+    }                                                                                          
+     return tOutputStr;
+}
+
 
 //////////////
 // SELECTOR // 
 //////////////
 
 string trollChat(string chatmsg) {
-        if  (selTroll == "Terezi" ) { return tereziChat(chatmsg); }
+        if  (selTroll == "Terezi") { return tereziChat(chatmsg); }
     else if (selTroll == "Karkat") { return karkatChat(chatmsg); }
     else if (selTroll == "Eridan") { return eriChat(chatmsg); }
     else if (selTroll == "Feferi") { return fefChat(chatmsg); }
@@ -256,13 +308,12 @@ string trollChat(string chatmsg) {
     else if (selTroll == "Kanaya") { return kanChat(chatmsg); }
     else if (selTroll == "Vriska") { return vriChat(chatmsg); }
     else if (selTroll == "Aradia") { return ariChat(chatmsg); }
-   // else if (selTroll == "Tavros") { return tavChat(chatmsg); }
+    else if (selTroll == "Tavros") { return tavChat(chatmsg); }
     else {
-        llOwnerSay("WHAT IS WRONG WISH THIS PICTURE?!?!?!?!?!");
         llOwnerSay("ERROR: MenuReturn failure, this should never happen. Contact support.");
         return NULL_KEY;
          }
-}
+ }
 
 ////////////
 //  MAIN  //
