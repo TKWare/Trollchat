@@ -1,10 +1,12 @@
 //TrollChat by Tsukasa Karuna, Isaz Svoboda
+//(C)2011
+
 //Debug Mode
 integer debug = 0;
 
 //This is the major version that will be used for updates, i.e. shit that end users will see
 //so don't stress about changing this until release time.
-string version = "0.11b";
+string version = "1.0.21";
 
 //////////////////////
 //GLOBAL DEFINITIONS//
@@ -38,21 +40,17 @@ integer randIntBetween(integer min, integer max)
     return min + randInt(max - min);
 }
 
-
-integer isin(string haystack, string needle) // http://wiki.secondlife.com/wiki/llSubStringIndex
-{
-    return ~llSubStringIndex(haystack, needle);
-}
-
-//Global init function, clear the listener just in case
+//Global init function
 init()
 {
     llOwnerSay("Initializing...");
+    llSetPrimitiveParams([ PRIM_TEXTURE, ALL_SIDES, "b31dc659-5131-21af-69fa-4a947551a25a", <1.0, 1.0, 0.0>, <0.0, 0.0, 0.0>, 0.0 ]); //reset to the default texture
     llListenRemove(listenHandle);
     listenHandle = llListen(413, "", llGetOwner(), "");
+    
 }
 
-//Get memory free
+//Get memory free, used in debug mode
 string memory()
 {
     string freemem = "Free memory: " + (string)llGetFreeMemory();
@@ -220,6 +218,8 @@ string kanChat(string input) {
 string vriChat(string input) {
     input = strReplace(input,"b","8");
     input = strReplace(input,":)","::::)");
+    input = strReplace(input,"ate","8");
+    input = strReplace(input,"eight","8");
     return input;
 }
 
@@ -352,14 +352,13 @@ default
     {
         selTroll = command;
         llOwnerSay(command + " selected.");
-        //llOwnerSay("selTroll set to " + selTroll); //DEBUG FUNCTION
     }
     
     state_entry()
     {
         init();
         llOwnerSay("TrollChat "  + version + " ready." );
-        llOwnerSay( memory() );
+        if (debug) llOwnerSay( memory() );
         llOwnerSay("Troll channel: 413");
         if ( llGetObjectDesc() == "DEBUG MODE" ) { llOwnerSay("DEBUG MODE ENABLED");
                                                    debug = 1;                     }
@@ -369,7 +368,7 @@ default
     {
         string myName = llGetObjectName();
         llSetObjectName(llKey2Name(llGetOwner()));
-        //llOwnerSay("hit listen with " + selTroll); //DEBUG FUNCTION
+        if (debug) llOwnerSay("hit listen with " + selTroll);
         llSay(0, trollChat(message) );
         llSetObjectName(myName);
     }
@@ -379,4 +378,4 @@ default
         if (debug) llOwnerSay( memory() );
     }
     
-   }
+}
