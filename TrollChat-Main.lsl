@@ -1,12 +1,11 @@
 //TrollChat by Tsukasa Karuna, Isaz Svoboda
-//(C)2011
-
 //Debug Mode
 integer debug = 0;
 
 //This is the major version that will be used for updates, i.e. shit that end users will see
 //so don't stress about changing this until release time.
-string version = "1.0.21";
+string version = "1.1";
+
 
 //////////////////////
 //GLOBAL DEFINITIONS//
@@ -15,14 +14,17 @@ string version = "1.0.21";
 //listen handle
 integer listenHandle;
 
-//Used for making the chat name right.
-string myName;
-
 //Which troll are we? Use later..
 string selTroll = "";
 
 //Ougoing chat, also used later
 string outChat;
+
+//Chat Channel
+integer chatchannel = 413;
+
+//Bit to check if we're currently setting the channel
+integer setchannel = 0;
 
 //strReplace by Haravikk Mistral
 string strReplace(string str, string search, string replace) {
@@ -46,8 +48,7 @@ init()
     llOwnerSay("Initializing...");
     llSetPrimitiveParams([ PRIM_TEXTURE, ALL_SIDES, "b31dc659-5131-21af-69fa-4a947551a25a", <1.0, 1.0, 0.0>, <0.0, 0.0, 0.0>, 0.0 ]); //reset to the default texture
     llListenRemove(listenHandle);
-    listenHandle = llListen(413, "", llGetOwner(), "");
-    
+    listenHandle = llListen(chatchannel, "", llGetOwner(), "");    
 }
 
 //Get memory free, used in debug mode
@@ -218,8 +219,6 @@ string kanChat(string input) {
 string vriChat(string input) {
     input = strReplace(input,"b","8");
     input = strReplace(input,":)","::::)");
-    input = strReplace(input,"ate","8");
-    input = strReplace(input,"eight","8");
     return input;
 }
 
@@ -260,7 +259,7 @@ string tavChat(string input) {
         if (debug) llOwnerSay("Target word: " + tTargetWord);                                    
         if ( tTargetWord == "." ) 
         {
-            llOwnerSay("We must be a period, go to next word");
+            if (debug) llOwnerSay("We must be a period, go to next word");
             tDoCap = 1;
             tChatLinePos++;
             tTargetWord = llList2String(tChat, tChatLinePos);
@@ -333,8 +332,7 @@ string trollChat(string chatmsg) {
     else if (selTroll == "Aradia") { return ariChat(chatmsg); }
     else if (selTroll == "Tavros") { return tavChat(chatmsg); }
     else {
-        llOwnerSay("ERROR: MenuReturn failure, this should never happen. Contact support.");
-        return NULL_KEY;
+        return "";
          }
  }
 
@@ -346,6 +344,7 @@ default
     on_rez(integer start_param)
     {
         init();
+        chatchannel = (integer)llGetObjectDesc();
     }
     
     link_message(integer sender_num, integer num, string command, key id)
@@ -359,23 +358,44 @@ default
         init();
         llOwnerSay("TrollChat "  + version + " ready." );
         if (debug) llOwnerSay( memory() );
-        llOwnerSay("Troll channel: 413");
+        chatchannel = (integer)llGetObjectDesc();
+        llOwnerSay("Troll Channel: " + (string)chatchannel);
+        llOwnerSay("Text Commands: trollchannel, trollhelp. HUD button to choose mode.");
         if ( llGetObjectDesc() == "DEBUG MODE" ) { llOwnerSay("DEBUG MODE ENABLED");
                                                    debug = 1;                     }
     }
     
     listen(integer channel, string name, key id, string message)
     {
+        if ((message == "trollchannel") && (setchannel == 0)) {
+            setchannel = 1;
+            llOwnerSay("Please say on /" + (string)chatchannel + " the new channel you would like to use for trollchat");
+        }
+        else if ((setchannel == 1) && (message != "trollchannel")) {
+            chatchannel = (integer)message;
+            llSetObjectDesc(message);
+            llOwnerSay("Got it, Troll Channel: " + (string)chatchannel);
+            setchannel = 0;
+            init();
+        }
+        else if (message == "trollhelp") {
+            llOwnerSay("To chat as a troll, click the HUD button. Then, select the troll you wish to emulate from the dialog.");
+            llOwnerSay("The button will change to that troll's symbol to confirm. Then, you simply need to speak whatever text");
+            llOwnerSay("you wish to troll-ify on the troll channel, which is currently " + (string)chatchannel);
+            llOwnerSay("To change the troll channel, say the word trollchannel.");
+        }
+        else if (selTroll == "") llOwnerSay("Error! Select a troll before chatting!");
+        else {
         string myName = llGetObjectName();
         llSetObjectName(llKey2Name(llGetOwner()));
-        if (debug) llOwnerSay("hit listen with " + selTroll);
         llSay(0, trollChat(message) );
         llSetObjectName(myName);
+        }
     }
-   
+  
     touch_start(integer foo)
     {
         if (debug) llOwnerSay( memory() );
     }
     
-}
+   }
