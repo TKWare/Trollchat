@@ -1,8 +1,11 @@
 //TrollChat by Tsukasa Karuna, Isaz Svoboda
+//Debug Mode
+integer debug = 0;
 
 //This is the major version that will be used for updates, i.e. shit that end users will see
 //so don't stress about changing this until release time.
-string version = "0.10b";
+string version = "1.1";
+
 
 //////////////////////
 //GLOBAL DEFINITIONS//
@@ -11,14 +14,17 @@ string version = "0.10b";
 //listen handle
 integer listenHandle;
 
-//Used for making the chat name right.
-string myName;
-
 //Which troll are we? Use later..
 string selTroll = "";
 
 //Ougoing chat, also used later
 string outChat;
+
+//Chat Channel
+integer chatchannel = 413;
+
+//Bit to check if we're currently setting the channel
+integer setchannel = 0;
 
 //strReplace by Haravikk Mistral
 string strReplace(string str, string search, string replace) {
@@ -36,23 +42,16 @@ integer randIntBetween(integer min, integer max)
     return min + randInt(max - min);
 }
 
-//String logic, also from the LSL wiki
-//Maybe we won't need this one?
-//integer isin(string haystack, string needle) // http://wiki.secondlife.com/wiki/llSubStringIndex
-//{
-//    return ~llSubStringIndex(haystack, needle);
-//}
-
 //Global init function
-//Reset the listener and say what's up
 init()
 {
+    llOwnerSay("Initializing...");
+    llSetPrimitiveParams([ PRIM_TEXTURE, ALL_SIDES, "b31dc659-5131-21af-69fa-4a947551a25a", <1.0, 1.0, 0.0>, <0.0, 0.0, 0.0>, 0.0 ]); //reset to the default texture
     llListenRemove(listenHandle);
-    listenHandle = llListen(413, "", llGetOwner(), "");
-    llOwnerSay("Initializing");
+    listenHandle = llListen(chatchannel, "", llGetOwner(), "");    
 }
 
-//Get memory free
+//Get memory free, used in debug mode
 string memory()
 {
     string freemem = "Free memory: " + (string)llGetFreeMemory();
@@ -69,11 +68,13 @@ string tereziChat(string input) {
         input = strReplace(input,"E","3"); 
         input = strReplace(input,"A","4"); 
         input = strReplace(input,"I","1"); 
-        input = strReplace(input,":)",">:]"); 
+        input = strReplace(input,":)",">:]");
+        input = strReplace(input,":(",">:(");
+        input = strReplace(input,":|",">:(");
         return input;
     }
     
-////Karkat Vantas//// (Easy mode!) (Hell I don't even need to write a function for this!) (But I'm going to because OC-fucking-D)
+////Karkat Vantas//// (Easy mode!)
 string karkatChat(string input) {
     return llToUpper(input);
 }
@@ -83,7 +84,7 @@ string eriChat(string input) {
     input = llToLower(input);
     input = strReplace(input,"w","ww");
     input = strReplace(input,"v","vv");
-    input = strReplace(input,"ing","in");
+    input = strReplace(input,"ing","in'");
     input = strReplace(input,",","");
     input = strReplace(input,".","");
     input = strReplace(input,"!","");
@@ -138,25 +139,25 @@ return input;
 
 ////Gamzee Makara//// 
 string gamChat(string input) {
-    integer len = llStringLength(input);
+    integer glen = llStringLength(input);
     integer oe = randIntBetween(0,1);
-    integer loc = 0; 
+    integer gloc = 0; 
     string miracles;
-    while ( loc < len )
+    while ( gloc < glen )
     {
-        string work = llGetSubString(input, loc, loc); 
-        if ( oe == 1 )
+        string work = llGetSubString(input, gloc, gloc);
+        if ( oe == 1 )  //BIFURCATE (THIS, THIS)
         {
             work = llToUpper(work); 
             miracles = miracles + work;
-            loc++;
+            gloc++;
             oe = 0; 
         }
         else
         {
             work = llToLower(work);
             miracles = miracles + work;
-            loc++;
+            gloc++;
             oe = 1;
         }
     }
@@ -177,7 +178,42 @@ return input;
 }
     
 ////Kanaya Maryam////
-//stuff
+string kanChat(string input) {
+    integer kLen = llStringLength(input); 
+    list kChatLineList = llParseStringKeepNulls(input,[" "],["."]);
+    if (debug) { llOwnerSay("Got: " + (string)kChatLineList); }
+    if (debug) { llOwnerSay("<" + llDumpList2String(kChatLineList,"><") + ">"); }
+    integer kChatLineLen = llGetListLength(kChatLineList);
+    integer kLinePos = 0;
+    list kcase;
+    string kOutputStr;
+    while ( kLinePos < kChatLineLen )
+    {
+        string kCaseWork = llGetSubString(llList2String(kChatLineList, kLinePos), 0, 0);
+        string kCaseWord = llList2String(kChatLineList, kLinePos);
+        if (debug) { llOwnerSay("Target Letter: " + kCaseWork + " in " + kCaseWord); }
+        kCaseWork = llToUpper(kCaseWork);
+        kCaseWord = llDeleteSubString(kCaseWord, 0, 0);
+        kCaseWord = llInsertString(kCaseWord,0,kCaseWork);
+        if (debug) { llOwnerSay("New letter: " + kCaseWork);
+                     llOwnerSay("New word: " + kCaseWord); }
+        list kReplacement = llParseString2List(kCaseWord, [""] ,[""]);
+        if (debug) { llOwnerSay("Replacement string: " + (string)kReplacement); }
+        if (debug) { llOwnerSay("List position before replace: " + (string)kLinePos); }
+        kChatLineList = llListReplaceList(kChatLineList, kReplacement, kLinePos, kLinePos);
+        if (debug) { llOwnerSay("<" + llDumpList2String(kChatLineList,"><") + ">"); }
+        kLinePos++;
+        if (debug) { llOwnerSay("List position after replace: " + (string)kLinePos); }
+    }
+    kLinePos = 0;
+    while ( kLinePos < kChatLineLen )
+    {
+        kOutputStr = kOutputStr + llList2String(kChatLineList, kLinePos) + " ";
+        if (debug) { llOwnerSay("Ouput string progress: " + kOutputStr); }
+        kLinePos++;
+    }
+    return kOutputStr;
+}
 
 ////Vriska Serket////
 string vriChat(string input) {
@@ -195,15 +231,95 @@ string ariChat(string input) {
     input = strReplace(input,"!","");
     input = strReplace(input,";","");
     return input;
-    }
+}
     
+    
+////Tavros Nitram////
+string tavChat(string input) {
+    input = llToUpper(input);                                                                       
+    list tChat = llParseString2List(input,[" "], [".", ","]);
+    if (debug) { llOwnerSay("<" + llDumpList2String(tChat,"><") + ">"); }                                
+    integer tChatLineLen = llGetListLength(tChat);
+    if (debug) { llOwnerSay("List length: " + (string)tChatLineLen);}                                             
+    integer tChatLinePos = 0;                                                                      
+    integer tDoCap       = 0;
+    string tTargetWord;
+    string tOutputStr;  // Declaring our variables ahead of time, to avoid confusion later
+    list tFixedWordList;
+    string tTargetLetter;
+    string tFixedLetter;
+    string tFixedWord;
+    if (debug) { llOwnerSay("Entering main loop with: " + input);
+                 llOwnerSay((string)tChatLineLen);
+                 llOwnerSay((string)tChatLinePos);
+                  }                                                                         
+    while ( tChatLineLen > tChatLinePos )                                                          
+    {
+        tTargetWord = llList2String(tChat, tChatLinePos);
+        if (debug) llOwnerSay("Target word: " + tTargetWord);                                    
+        if ( tTargetWord == "." ) 
+        {
+            if (debug) llOwnerSay("We must be a period, go to next word");
+            tDoCap = 1;
+            tChatLinePos++;
+            tTargetWord = llList2String(tChat, tChatLinePos);
+                                                                                    
+        } 
+        else if ( tTargetWord == ",")
+        {
+            if (debug) llOwnerSay("We must be a comma, go to next word");
+            tDoCap = 1;
+            tChatLinePos++;
+            tTargetWord = llList2String(tChat, tChatLinePos);
+        }
+        else if ( tChatLinePos == 0 )
+        {
+            if (debug) llOwnerSay("This must be word 0: " + tTargetWord);
+            tDoCap = 1;
+        }
+        else;
+        if ( tDoCap == 1 )
+        {
+        tTargetLetter = llGetSubString(tTargetWord, 0, 0);                                  
+        tFixedLetter = llToLower(tTargetLetter);                                            
+        tTargetWord = llDeleteSubString(tTargetWord, 0, 0);                                         
+        tFixedWord = llInsertString(tTargetWord, 0, tFixedLetter);                          
+        tFixedWordList = llParseString2List(tFixedWord, [""], [""]);                              
+        tChat = llListReplaceList(tChat, tFixedWordList, tChatLinePos, tChatLinePos);          
+        tDoCap = 0;                                                                             
+        tChatLinePos++;      
+        }                                                     
+        else
+        {        
+        if (debug) llOwnerSay("skipping caps");
+        tChatLinePos++;
+        }
+    }
+    tChatLinePos = 0;                                                                            
+    while (tChatLineLen > tChatLinePos)                                                         
+    {
+        if (( llList2String(tChat, tChatLinePos+1) == "," ) || ( llList2String(tChat, tChatLinePos+1) == "." )) //If the next character after our word is a "." or "," , skip adding the space
+        {
+            tOutputStr = tOutputStr + llList2String(tChat, tChatLinePos);
+            tChatLinePos++;
+        }
+        else 
+        {
+        tOutputStr = tOutputStr + llList2String(tChat, tChatLinePos) + " ";
+        if (debug) llOwnerSay(tOutputStr);
+        tChatLinePos++;
+        }
+    }                                                                                          
+     return tOutputStr;
+}
 
-/////////////
-// SELECTOR// 
-/////////////
+
+//////////////
+// SELECTOR // 
+//////////////
 
 string trollChat(string chatmsg) {
-        if  (selTroll == "Terezi" ) { return tereziChat(chatmsg); }
+        if  (selTroll == "Terezi") { return tereziChat(chatmsg); }
     else if (selTroll == "Karkat") { return karkatChat(chatmsg); }
     else if (selTroll == "Eridan") { return eriChat(chatmsg); }
     else if (selTroll == "Feferi") { return fefChat(chatmsg); }
@@ -211,55 +327,75 @@ string trollChat(string chatmsg) {
     else if (selTroll == "Nepeta") { return nepChat(chatmsg); }
     else if (selTroll == "Gamzee") { return gamChat(chatmsg); }
     else if (selTroll == "Sollux") { return solChat(chatmsg); }
-   // else if (selTroll == "Kanaya") { return kanChat(chatmsg); }
+    else if (selTroll == "Kanaya") { return kanChat(chatmsg); }
     else if (selTroll == "Vriska") { return vriChat(chatmsg); }
     else if (selTroll == "Aradia") { return ariChat(chatmsg); }
-   // else if (selTroll == "Tavros") { return tavChat(chatmsg); }
+    else if (selTroll == "Tavros") { return tavChat(chatmsg); }
     else {
-        llOwnerSay("WHAT IS WRONG WISH THIS PICTURE?!?!?!?!?!");
-        llOwnerSay("ERROR: MenuReturn failure, this should never happen. Contact support.");
-        return NULL_KEY;
+        return "";
          }
-}
+ }
 
-/////////////
-//   MAIN  //
-/////////////
+////////////
+//  MAIN  //
+////////////
 default
 {
     on_rez(integer start_param)
     {
         init();
+        chatchannel = (integer)llGetObjectDesc();
     }
     
     link_message(integer sender_num, integer num, string command, key id)
     {
         selTroll = command;
         llOwnerSay(command + " selected.");
-        //llOwnerSay("selTroll set to " + selTroll); //DEBUG FUNCTION
     }
     
     state_entry()
     {
         init();
         llOwnerSay("TrollChat "  + version + " ready." );
-        llOwnerSay( memory() );
-        llOwnerSay("Troll channel: 413");
+        if (debug) llOwnerSay( memory() );
+        chatchannel = (integer)llGetObjectDesc();
+        llOwnerSay("Troll Channel: " + (string)chatchannel);
+        llOwnerSay("Text Commands: trollchannel, trollhelp. HUD button to choose mode.");
+        if ( llGetObjectDesc() == "DEBUG MODE" ) { llOwnerSay("DEBUG MODE ENABLED");
+                                                   debug = 1;                     }
     }
     
     listen(integer channel, string name, key id, string message)
     {
+        if ((message == "trollchannel") && (setchannel == 0)) {
+            setchannel = 1;
+            llOwnerSay("Please say on /" + (string)chatchannel + " the new channel you would like to use for trollchat");
+        }
+        else if ((setchannel == 1) && (message != "trollchannel")) {
+            chatchannel = (integer)message;
+            llSetObjectDesc(message);
+            llOwnerSay("Got it, Troll Channel: " + (string)chatchannel);
+            setchannel = 0;
+            init();
+        }
+        else if (message == "trollhelp") {
+            llOwnerSay("To chat as a troll, click the HUD button. Then, select the troll you wish to emulate from the dialog.");
+            llOwnerSay("The button will change to that troll's symbol to confirm. Then, you simply need to speak whatever text");
+            llOwnerSay("you wish to troll-ify on the troll channel, which is currently " + (string)chatchannel);
+            llOwnerSay("To change the troll channel, say the word trollchannel.");
+        }
+        else if (selTroll == "") llOwnerSay("Error! Select a troll before chatting!");
+        else {
         string myName = llGetObjectName();
         llSetObjectName(llKey2Name(llGetOwner()));
-        //llOwnerSay("hit listen with " + selTroll); //DEBUG FUNCTION
         llSay(0, trollChat(message) );
         llSetObjectName(myName);
+        }
     }
-   
-   /// DEBUG CRAP 
-   /// touch_start(integer foo)
-   /// {
-   ///     llOwnerSay( memory() );
-   /// }
+  
+    touch_start(integer foo)
+    {
+        if (debug) llOwnerSay( memory() );
+    }
     
    }
